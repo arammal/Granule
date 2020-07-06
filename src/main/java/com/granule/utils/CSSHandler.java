@@ -21,13 +21,10 @@ package com.granule.utils;
  * Time: 22:08:04
  */
 
-import com.granule.CompressorSettings;
-import com.granule.ExternalFragment;
-import com.granule.FragmentDescriptor;
-import com.granule.IRequestProxy;
-import com.granule.JSCompileException;
+import com.granule.*;
 import com.granule.logging.Logger;
 import com.granule.logging.LoggerFactory;
+import com.granule.settings.AbstractCompressorSettings;
 
 import java.io.File;
 import java.text.MessageFormat;
@@ -93,7 +90,7 @@ public final class CSSHandler {
         return match;
     }
 
-    public String handle(FragmentDescriptor fd, IRequestProxy request, CompressorSettings settings,
+    public String handle(FragmentDescriptor fd, IRequestProxy request, AbstractCompressorSettings settings,
                          List<FragmentDescriptor> deps) throws JSCompileException {
         try {
             if (fd instanceof ExternalFragment && settings.isIgnoreMissedFiles() && 

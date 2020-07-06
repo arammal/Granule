@@ -15,14 +15,11 @@
  */
 package com.granule.cache;
 
-import com.granule.CachedBundle;
-import com.granule.CompressorSettings;
-import com.granule.FragmentDescriptor;
-import com.granule.IRequestProxy;
-import com.granule.JSCompileException;
+import com.granule.*;
 import com.granule.json.JSONException;
 import com.granule.logging.Logger;
 import com.granule.logging.LoggerFactory;
+import com.granule.settings.AbstractCompressorSettings;
 
 import javax.servlet.ServletContext;
 import java.util.List;
@@ -46,7 +43,7 @@ public class MemoryCache extends TagCacheImpl {
         return instance;
     }
 
-    public String compressAndStore(IRequestProxy request, CompressorSettings settings,
+    public String compressAndStore(IRequestProxy request, AbstractCompressorSettings settings,
                                    List<FragmentDescriptor> fragmentDescriptors, boolean isJs, String options) throws JSCompileException {
 
         String signature = generateSignature(settings, fragmentDescriptors, options, isJs);
@@ -83,7 +80,7 @@ public class MemoryCache extends TagCacheImpl {
         return id;
     }
 
-    public CachedBundle getCompiledBundle(IRequestProxy request, CompressorSettings settings, String id)
+    public CachedBundle getCompiledBundle(IRequestProxy request, AbstractCompressorSettings settings, String id)
             throws JSCompileException {
         CachedBundle bundle = null;
         synchronized (this) {
@@ -102,11 +99,11 @@ public class MemoryCache extends TagCacheImpl {
         return bundle;
     }
 
-    public void initForStandalone(String rootPath, CompressorSettings settings) {
+    public void initForStandalone(String rootPath, AbstractCompressorSettings settings) {
         // no actions
     }
 
-    public void initWeb(ServletContext context, CompressorSettings settings) {
+    public void initWeb(ServletContext context, AbstractCompressorSettings settings) {
         // no actions
     }
 

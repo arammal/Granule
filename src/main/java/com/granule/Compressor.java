@@ -19,6 +19,8 @@ import com.google.javascript.jscomp.CompilationLevel;
 import com.google.javascript.jscomp.Compiler;
 import com.google.javascript.jscomp.CompilerOptions;
 import com.google.javascript.jscomp.Result;
+import com.granule.settings.AbstractCompressorSettings;
+import com.granule.settings.CompressorSettingsHelper;
 import com.granule.utils.CSSHandler;
 import com.granule.utils.PathUtils;
 
@@ -33,7 +35,7 @@ import java.util.*;
 public class Compressor {
 
     public static String compile(List<FragmentDescriptor> scripts, IRequestProxy request,
-                                 CompressorSettings settings) throws JSCompileException {
+                                 AbstractCompressorSettings settings) throws JSCompileException {
         Compiler compiler = new Compiler();
 
         CompilerOptions options = new CompilerOptions();
@@ -43,9 +45,9 @@ public class Compressor {
         options.setPrettyPrint(settings.isFormatPrettyPrint());
         options.printInputDelimiter = settings.isFormatPrintInputDelimiter();
         if (settings.getOptimization() != null) {
-            if (settings.getOptimization().equalsIgnoreCase(CompressorSettings.ADVANCED_OPTIMIZATIONS_VALUE))
+            if (settings.getOptimization().equalsIgnoreCase(CompressorSettingsHelper.ADVANCED_OPTIMIZATIONS_VALUE))
                 CompilationLevel.ADVANCED_OPTIMIZATIONS.setOptionsForCompilationLevel(options);
-            else if (settings.getOptimization().equalsIgnoreCase(CompressorSettings.WHITESPACE_ONLY_VALUE))
+            else if (settings.getOptimization().equalsIgnoreCase(CompressorSettingsHelper.WHITESPACE_ONLY_VALUE))
                 CompilationLevel.WHITESPACE_ONLY.setOptionsForCompilationLevel(options);
             else CompilationLevel.SIMPLE_OPTIMIZATIONS.setOptionsForCompilationLevel(options);
         }
@@ -93,7 +95,7 @@ public class Compressor {
         return sb.toString();
     }
 
-    public static String minifyJs(List<FragmentDescriptor> scripts, CompressorSettings settings,
+    public static String minifyJs(List<FragmentDescriptor> scripts, AbstractCompressorSettings settings,
                                   IRequestProxy request) throws JSCompileException {
         String result = unify(scripts, request);
         try {
@@ -108,7 +110,7 @@ public class Compressor {
     }
 
     public static String unifyCss(List<FragmentDescriptor> fragments, List<FragmentDescriptor> deps,
-                                  CompressorSettings settings, IRequestProxy request) throws JSCompileException {
+                                  AbstractCompressorSettings settings, IRequestProxy request) throws JSCompileException {
         StringBuilder sb = new StringBuilder();
         for (FragmentDescriptor sd : fragments) {
             try {
@@ -125,13 +127,13 @@ public class Compressor {
     }
 
     public static String minifyCss(List<FragmentDescriptor> fragments, List<FragmentDescriptor> deps,
-                                   CompressorSettings settings, IRequestProxy request) throws JSCompileException {
+                                   AbstractCompressorSettings settings, IRequestProxy request) throws JSCompileException {
         String result = unifyCss(fragments, deps, settings, request);
         CSSFastMin cssMin = new CSSFastMin();
         return cssMin.minimize(result);
     }
 
-    private static String getLicenses(List<FragmentDescriptor> fragments, CompressorSettings settings,
+    private static String getLicenses(List<FragmentDescriptor> fragments, AbstractCompressorSettings settings,
                                       IRequestProxy request) throws IOException {
         Set<String> licenses = new HashSet<String>();
         for (FragmentDescriptor fd : fragments) {
@@ -144,7 +146,7 @@ public class Compressor {
         return sb.toString();
     }
 
-    private static boolean checkFile(String filename, CompressorSettings settings) {
+    private static boolean checkFile(String filename, AbstractCompressorSettings settings) {
         List<String> files = settings.getKeepFirstCommentPathes();
         for (String file : files) {
             file = PathUtils.clean(file);

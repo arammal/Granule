@@ -21,7 +21,8 @@ import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.util.List;
 
-import com.granule.CompressorSettings;
+import com.granule.settings.DefaultCompressorSettings;
+import com.granule.settings.CompressorSettingsHelper;
 import com.granule.JSCompileException;
 import com.granule.utils.OptionsHandler;
 
@@ -30,7 +31,7 @@ import junit.framework.TestCase;
 public class CompressSettingsTest extends TestCase {
 
 	public void testAddPath() {
-		CompressorSettings settings = getSettings(CompressorSettings.CLOSURE_ADD_PATH_KEY
+		DefaultCompressorSettings settings = getSettings(CompressorSettingsHelper.CLOSURE_ADD_PATH_KEY
 				+ " = js/My Samples=,\"js\\test=1,benchmarks\",\"js/test=2,benchmarks\"");
 		List<String> list = settings.getClosurePathes();
 		assertEquals(list.get(0), "js/My Samples=");
@@ -39,10 +40,10 @@ public class CompressSettingsTest extends TestCase {
 	}
 
 	public void testOptionsAdding() {
-		CompressorSettings settings = getSettings("");
-		settings.setJsCompressMethod(CompressorSettings.CLOSURE_COMPILER_VALUE);
+		DefaultCompressorSettings settings = getSettings("");
+		settings.setJsCompressMethod(CompressorSettingsHelper.CLOSURE_COMPILER_VALUE);
 		try {
-			String tagOptions=CompressorSettings.CLOSURE_ADD_PATH_KEY.replace(CompressorSettings.CLOSURE_COMPILER_VALUE+".", "") + "=\"js/My Samples2=\"";
+			String tagOptions= CompressorSettingsHelper.CLOSURE_ADD_PATH_KEY.replace(CompressorSettingsHelper.CLOSURE_COMPILER_VALUE+".", "") + "=\"js/My Samples2=\"";
 			String preparedOptions = (new OptionsHandler()).handle(tagOptions, settings.getJsCompressMethod());
 			settings.setOptions(preparedOptions);
 		} catch (JSCompileException e) {
@@ -53,9 +54,9 @@ public class CompressSettingsTest extends TestCase {
 		assertEquals(list.get(0), "js/My Samples2=");
 	}
 
-	private CompressorSettings getSettings(String s) {
+	private DefaultCompressorSettings getSettings(String s) {
 		try {
-			CompressorSettings settings = new CompressorSettings(getInputStream(s));
+			DefaultCompressorSettings settings = new DefaultCompressorSettings(getInputStream(s));
 			return settings;
 		} catch (IOException e) {
 			e.printStackTrace();

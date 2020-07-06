@@ -15,6 +15,8 @@
  */
 package com.granule;
 
+import com.granule.settings.CompressorSettingsHelper;
+
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
@@ -47,7 +49,7 @@ public class CompressTag extends BodyTagSupport {
         String oldBody = bc.getString();
         bc.clearBody();
         if (httpRequest.getParameter(NOT_PROCESS_PARAMETER) != null) {
-            boolean b = CompressorSettings.getBoolean(httpRequest.getParameter(NOT_PROCESS_PARAMETER), false);
+            boolean b = CompressorSettingsHelper.getBoolean(httpRequest.getParameter(NOT_PROCESS_PARAMETER), false);
             if (!b)
                 httpRequest.getSession().setAttribute(NOT_PROCESS_PARAMETER, true);
             else httpRequest.getSession().removeAttribute(NOT_PROCESS_PARAMETER);

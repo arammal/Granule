@@ -21,6 +21,8 @@ import com.granule.json.JSONException;
 import com.granule.json.JSONObject;
 import com.granule.logging.Logger;
 import com.granule.logging.LoggerFactory;
+import com.granule.settings.AbstractCompressorSettings;
+import com.granule.settings.CompressorSettingsHelper;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -88,7 +90,7 @@ public class CachedBundle {
         return d;
     }
 
-    public void compileScript(CompressorSettings settings, IRequestProxy request) throws JSCompileException {
+    public void compileScript(AbstractCompressorSettings settings, IRequestProxy request) throws JSCompileException {
         logger.debug("Start compile javascript");
         mimeType = JAVASCRIPT_MIME;
         CalcDeps cd = new CalcDeps();
@@ -97,11 +99,11 @@ public class CachedBundle {
         boolean isGoogleClosurePresent = !list.equals(fragments);
         if (isGoogleClosurePresent)
             list.add(0, new InternalFragment("CLOSURE_NO_DEPS=true;\n"));
-        if (settings.getJsCompressMethod().equals(CompressorSettings.CLOSURE_COMPILER_VALUE))
+        if (settings.getJsCompressMethod().equals(CompressorSettingsHelper.CLOSURE_COMPILER_VALUE))
             text = Compressor.compile(list, request, settings);
-        else if (settings.getJsCompressMethod().equals(CompressorSettings.JSFASTMIN_VALUE))
+        else if (settings.getJsCompressMethod().equals(CompressorSettingsHelper.JSFASTMIN_VALUE))
             text = Compressor.minifyJs(list, settings, request);
-        else if (settings.getJsCompressMethod().equalsIgnoreCase(CompressorSettings.AUTO_VALUE)) {
+        else if (settings.getJsCompressMethod().equalsIgnoreCase(CompressorSettingsHelper.AUTO_VALUE)) {
             if (isGoogleClosurePresent) text = Compressor.compile(list, request, settings);
             else text = Compressor.minifyJs(list, settings, request);
         } else text = Compressor.unify(list, request);
@@ -123,18 +125,18 @@ public class CachedBundle {
         this.modifyDate=calcModifyDate(request);
     }
 
-    public void compile(CompressorSettings settings, IRequestProxy request) throws JSCompileException {
+    public void compile(AbstractCompressorSettings settings, IRequestProxy request) throws JSCompileException {
         dependentFragments.clear();
         if (mimeType != null && mimeType.equals(JAVASCRIPT_MIME))
             compileScript(settings, request);
         else compileCss(settings, request);
     }
 
-    public void compileCss(CompressorSettings settings, IRequestProxy request) throws JSCompileException {
+    public void compileCss(AbstractCompressorSettings settings, IRequestProxy request) throws JSCompileException {
         logger.debug("Start compile css");
         mimeType = CSS_MIME;
         String text = "";
-        if (settings.getCssCompressMethod().equals(CompressorSettings.CSSFASTMIN_VALUE))
+        if (settings.getCssCompressMethod().equals(CompressorSettingsHelper.CSSFASTMIN_VALUE))
             text = Compressor.minifyCss(fragments, dependentFragments, settings, request);
         else
             text = Compressor.unifyCss(fragments, dependentFragments, settings, request);

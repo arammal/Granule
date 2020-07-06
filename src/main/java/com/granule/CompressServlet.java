@@ -18,6 +18,7 @@ package com.granule;
 import com.granule.cache.TagCacheFactory;
 import com.granule.logging.Logger;
 import com.granule.logging.LoggerFactory;
+import com.granule.settings.AbstractCompressorSettings;
 import com.granule.utils.PathUtils;
 
 import javax.servlet.ServletException;
@@ -49,7 +50,17 @@ public class CompressServlet extends HttpServlet {
 
     private static String version = "unknown";
 
-    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException,
+	private final AbstractCompressorSettings compressorSettings;
+
+	public CompressServlet(AbstractCompressorSettings compressorSettings) {
+		this.compressorSettings = compressorSettings;
+	}
+
+	public CompressServlet() {
+		this(null);
+	}
+
+	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException,
             IOException {
         process(request, response);
     }
@@ -62,7 +73,7 @@ public class CompressServlet extends HttpServlet {
     private void process(HttpServletRequest request, HttpServletResponse response) throws IOException,
             ServletException {
         String id = request.getParameter(ID_PARAMETER);
-        (new CompressorHandler()).handle(request, response, id);
+        (new CompressorHandler()).handle(compressorSettings, request, response, id);
     }
 
     @Override
@@ -74,7 +85,7 @@ public class CompressServlet extends HttpServlet {
         rootLogger.setFilter(logFilter);
 
         try {
-            TagCacheFactory.init(getServletConfig().getServletContext());
+            TagCacheFactory.init(compressorSettings, getServletConfig().getServletContext());
             loadVersion();
         } catch (IOException e) {
             throw new ServletException(e);

@@ -1,12 +1,12 @@
 /*
  * Copyright 2010 Granule Inc.
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
  * the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
@@ -15,20 +15,7 @@
  */
 package com.granule.cache;
 
-import java.io.BufferedOutputStream;
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.FileReader;
-import java.io.FilenameFilter;
-import java.io.IOException;
-import java.text.MessageFormat;
-import java.util.List;
-
-import javax.servlet.ServletContext;
-
 import com.granule.CachedBundle;
-import com.granule.CompressorSettings;
 import com.granule.FragmentDescriptor;
 import com.granule.IRequestProxy;
 import com.granule.JSCompileException;
@@ -36,7 +23,13 @@ import com.granule.json.JSONException;
 import com.granule.json.JSONObject;
 import com.granule.logging.Logger;
 import com.granule.logging.LoggerFactory;
+import com.granule.settings.AbstractCompressorSettings;
 import com.granule.utils.PathUtils;
+
+import javax.servlet.ServletContext;
+import java.io.*;
+import java.text.MessageFormat;
+import java.util.List;
 
 /**
  * User: Dario Wunsch Date: 12.09.2010 Time: 4:05:16
@@ -68,9 +61,9 @@ public class FileCache extends TagCacheImpl {
 	}
 
 	public String compressAndStore(IRequestProxy request,
-			CompressorSettings settings,
-			List<FragmentDescriptor> fragmentDescriptors, boolean isJs,
-			String options) throws JSCompileException {
+								   AbstractCompressorSettings settings,
+								   List<FragmentDescriptor> fragmentDescriptors, boolean isJs,
+								   String options) throws JSCompileException {
 
 		logger.debug("FileCache compressAndStore");
 
@@ -119,9 +112,9 @@ public class FileCache extends TagCacheImpl {
 				bos.close();
 			}
 			cs.setModifyDate(f.lastModified());
-			
+
 			//f.setLastModified(System.currentTimeMillis());// cs.getModifyDate());
-            String json = cs.getJSONString(id);
+			String json = cs.getJSONString(id);
 			catalog.write(json.getBytes("UTF-8"));
 			catalog.flush();
 		} catch (Exception e) {
@@ -130,7 +123,7 @@ public class FileCache extends TagCacheImpl {
 	}
 
 	public CachedBundle getCompiledBundle(IRequestProxy request,
-			CompressorSettings settings, String id) throws JSCompileException {
+										  AbstractCompressorSettings settings, String id) throws JSCompileException {
 		logger.debug("FileCache getCompiledBundle");
 		CachedBundle bundle = null;
 		synchronized (this) {
@@ -168,7 +161,7 @@ public class FileCache extends TagCacheImpl {
 					}
 					CachedBundle cs = new CachedBundle();
 					cs.loadFromJSON(obj, cacheFolder);
-					CompressorSettings settings = TagCacheFactory
+					AbstractCompressorSettings settings = TagCacheFactory
 							.getCompressorSettings(context.getRealPath("/"));
 					if (cs.getOptions() != null)
 						settings.setOptions(cs.getOptions());
@@ -254,7 +247,7 @@ public class FileCache extends TagCacheImpl {
 		return deleted;
 	}
 
-	public void initForStandalone(String rootPath, CompressorSettings settings) {
+	public void initForStandalone(String rootPath, AbstractCompressorSettings settings) {
 		cacheFolder = calculateCacheLocation(settings, rootPath);
 		emptyCacheFolder();
 		String catalogFilename = getCacheCatalogFilePath();
@@ -269,7 +262,7 @@ public class FileCache extends TagCacheImpl {
 				f.delete();
 	}
 
-	public void initWeb(ServletContext context, CompressorSettings settings) {
+	public void initWeb(ServletContext context, AbstractCompressorSettings settings) {
 		logger.debug("FileCache init");
 		String rootPath = context.getRealPath("/");
 
@@ -305,8 +298,8 @@ public class FileCache extends TagCacheImpl {
 		}
 	}
 
-	private String calculateCacheLocation(CompressorSettings settings,
-			String rootPath) {
+	private String calculateCacheLocation(AbstractCompressorSettings settings,
+										  String rootPath) {
 		String cacheFolder;
 		if (settings.getCacheFileLocation() == null)
 			cacheFolder = DEFAULT_CACHE_FOLDER;
@@ -322,7 +315,7 @@ public class FileCache extends TagCacheImpl {
 	}
 
 	private String getCacheCatalogFilePath() {
-		return cacheFolder + "/"+CATALOG_JSON;
+		return cacheFolder + "/" + CATALOG_JSON;
 	}
 
 	private static final Logger logger = LoggerFactory

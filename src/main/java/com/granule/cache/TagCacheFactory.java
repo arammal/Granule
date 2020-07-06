@@ -15,8 +15,10 @@
  */
 package com.granule.cache;
 
-import com.granule.CompressorSettings;
 import com.granule.JSCompileException;
+import com.granule.settings.AbstractCompressorSettings;
+import com.granule.settings.DefaultCompressorSettings;
+import com.granule.settings.CompressorSettingsHelper;
 
 import javax.servlet.ServletContext;
 import java.io.IOException;
@@ -28,75 +30,69 @@ import java.util.*;
  * Time: 3:34:11
  */
 public class TagCacheFactory {
-    private static TagCacheImpl instance = null;
+	private static TagCacheImpl instance = null;
 
-    public static TagCache getInstance() throws JSCompileException {
-        if (instance == null)
-            throw new JSCompileException("Granule cache was loaded not on the server start-up. Recommended to add the parameter <load-on-startup>1<load-on-startup> into servlet configuration in web.xml.");
-        return instance;
-    }
+	public static TagCache getInstance() throws JSCompileException {
+		if (instance == null)
+			throw new JSCompileException("Granule cache was loaded not on the server start-up. Recommended to add the parameter <load-on-startup>1<load-on-startup> into servlet configuration.");
+		return instance;
+	}
 
-    public static void init(ServletContext context) throws IOException {
-        CompressorSettings settings = initInstance(context.getRealPath("/"));
-        instance.initWeb(context, settings);
-    }
+	public static void init(AbstractCompressorSettings settings, ServletContext context) throws IOException {
+		if (settings == null) {
+			settings = initInstance(context.getRealPath("/"));
+		}
 
-    private static CompressorSettings initInstance(String rootPath) throws IOException {
-        CompressorSettings settings = getCompressorSettings(rootPath);
-        if (settings.getCache().equals(CompressorSettings.DISK_CACHE_VALUE))
-            instance = FileCache.getInstance();
-        else instance = MemoryCache.getInstance();
-        return settings;
-    }
+		instance.initWeb(context, settings);
+	}
 
-    public static void init(String rootPath) throws IOException {
-        initInstance(rootPath);
-        instance.initForStandalone(rootPath, getCompressorSettings(rootPath));
-    }
+	private static AbstractCompressorSettings initInstance(String rootPath) throws IOException {
+		AbstractCompressorSettings settings = getCompressorSettings(rootPath);
+		if (settings.getCache().equals(CompressorSettingsHelper.DISK_CACHE_VALUE))
+			instance = FileCache.getInstance();
+		else instance = MemoryCache.getInstance();
+		return settings;
+	}
 
-    protected static final Properties settings = new Properties();
+	public static void init(String rootPath) throws IOException {
+		initInstance(rootPath);
+		instance.initForStandalone(rootPath, getCompressorSettings(rootPath));
+	}
 
-    protected static boolean settingsLoaded = false;
+	protected static final Properties properties = new Properties();
 
-    public static CompressorSettings getCompressorSettings(String rootPath) throws IOException {
-        synchronized (settings) {
-            if (!settingsLoaded) {
-                loadSettings(null);
-            }
-        }
-        return new CompressorSettings(settings);
-    }
+	protected static boolean propertiesLoaded = false;
 
-    public static CompressorSettings getProductionCompressorSettings(String rootPath, HashMap<String, String> addition) throws IOException {
-        synchronized (settings) {
-            if (!settingsLoaded) {
-                loadSettings(addition);
-            }
-        }
-        return new CompressorSettings(settings);
-    }
+	public static AbstractCompressorSettings getCompressorSettings(String rootPath) throws IOException {
+		synchronized (properties) {
+			if (!propertiesLoaded) {
+				loadSettings(null);
+			}
+		}
+		return new DefaultCompressorSettings(properties);
+	}
 
-    private static void loadSettings(HashMap<String, String> addition) {
-        ResourceBundle resource = ResourceBundle.getBundle("granule", Locale.getDefault());
-        if(resource != null) {
-            settings.putAll(toProperties(resource));
-        }
+	private static void loadSettings(HashMap<String, String> addition) {
+		ResourceBundle resource = ResourceBundle.getBundle("granule", Locale.getDefault());
+		if (resource != null) {
+			properties.putAll(toProperties(resource));
+		}
 
-        if (addition != null) {
-            settings.putAll(addition);
-        }
+		if (addition != null) {
+			properties.putAll(addition);
+		}
 
-        settingsLoaded = true;
-    }
+		propertiesLoaded = true;
+	}
 
-    private static Properties toProperties(ResourceBundle resource) {
-        Properties properties = new Properties();
-        Enumeration<String> keys = resource.getKeys();
-        while (keys.hasMoreElements()) {
-            String key = keys.nextElement();
-            properties.put(key, resource.getString(key));
-        }
-        return properties;
-    }
+	private static Properties toProperties(ResourceBundle resource) {
+		Properties properties = new Properties();
+		Enumeration<String> keys = resource.getKeys();
+		while (keys.hasMoreElements()) {
+			String key = keys.nextElement();
+			properties.put(key, resource.getString(key));
+		}
+		return properties;
+	}
 
 }

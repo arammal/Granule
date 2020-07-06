@@ -35,6 +35,8 @@ import com.granule.parser.Attributes;
 import com.granule.parser.Element;
 import com.granule.parser.TagReader;
 import com.granule.parser.Tags;
+import com.granule.settings.AbstractCompressorSettings;
+import com.granule.settings.CompressorSettingsHelper;
 import com.granule.utils.OptionsHandler;
 import com.granule.utils.PathUtils;
 
@@ -62,12 +64,12 @@ public class CompressTagHandler {
     public String handleTag(IRequestProxy requestProxy, IRequestProxy runtimRequest, String oldBody) throws JSCompileException {
         String newBody = oldBody;
         try {
-            CompressorSettings settings = TagCacheFactory.getCompressorSettings(requestProxy.getRealPath("/"));
+            AbstractCompressorSettings settings = TagCacheFactory.getCompressorSettings(requestProxy.getRealPath("/"));
             String bp = basepath == null ? settings.getBasePath() : basepath;
             // JavaScript processing
             String opts = null;
             if (method != null)
-                opts = CompressorSettings.JS_COMPRESS_METHOD_KEY + "=" + method + "\n";
+                opts = CompressorSettingsHelper.JS_COMPRESS_METHOD_KEY + "=" + method + "\n";
             if (options != null) {
                 String s = (new OptionsHandler()).handle(options, method == null ? settings.getJsCompressMethod() :
                         method);
@@ -182,7 +184,7 @@ public class CompressTagHandler {
                         sb.append(processChunk(before, requestProxy, runtimRequest, settings));
                         if (style.isContentExists()
                                 && settings.getCssCompressMethod()
-                                .equalsIgnoreCase(CompressorSettings.CSSFASTMIN_VALUE)) {
+                                .equalsIgnoreCase(CompressorSettingsHelper.CSSFASTMIN_VALUE)) {
                             sb.append(newBody.substring(style.getBegin(), style.getContentBegin()));
                             String s = newBody.substring(style.getContentBegin(), style.getContentEnd());
                             CSSFastMin min = new CSSFastMin();
@@ -250,7 +252,7 @@ public class CompressTagHandler {
         public String scriptId = null;
     }
 
-    private String processChunk(String chunk, IRequestProxy requestProxy, IRequestProxy runtimeRequest, CompressorSettings settings)
+    private String processChunk(String chunk, IRequestProxy requestProxy, IRequestProxy runtimeRequest, AbstractCompressorSettings settings)
             throws JSCompileException {
         TagReader source = new TagReader(chunk);
         String bp = basepath == null ? settings.getBasePath() : basepath;
