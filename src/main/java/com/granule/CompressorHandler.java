@@ -16,7 +16,7 @@
 package com.granule;
 
 import com.granule.cache.TagCacheFactory;
-import com.granule.settings.AbstractCompressorSettings;
+import com.granule.settings.CompressorSettings;
 import com.granule.utils.HttpHeaders;
 
 import javax.servlet.ServletException;
@@ -32,7 +32,7 @@ import java.io.OutputStream;
  */
 public class CompressorHandler {
 
-	public void handle(AbstractCompressorSettings settings, HttpServletRequest request, HttpServletResponse response, String id) throws IOException, ServletException {
+	public void handle(CompressorSettings settings, HttpServletRequest request, HttpServletResponse response, String id) throws IOException, ServletException {
 		if (id != null) {
 			if (settings == null) {
 				handle(request, response, id);
@@ -44,13 +44,13 @@ public class CompressorHandler {
 
 	public void handle(HttpServletRequest request, HttpServletResponse response, String id) throws IOException, ServletException {
 		if (id != null) {
-			AbstractCompressorSettings settings = TagCacheFactory.getCompressorSettings(request.getSession().getServletContext().getRealPath("/"));
+			CompressorSettings settings = TagCacheFactory.getCompressorSettings(request.getSession().getServletContext().getRealPath("/"));
 
 			process(settings, request, response, id);
 		}
 	}
 
-	private void process(AbstractCompressorSettings settings, HttpServletRequest request, HttpServletResponse response, String id) throws IOException, ServletException {
+	private void process(CompressorSettings settings, HttpServletRequest request, HttpServletResponse response, String id) throws IOException, ServletException {
 		CachedBundle bundle;
 		try {
 			bundle = TagCacheFactory.getInstance().getCompiledBundle(new RealRequestProxy(request), settings, id);

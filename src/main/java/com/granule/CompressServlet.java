@@ -18,7 +18,7 @@ package com.granule;
 import com.granule.cache.TagCacheFactory;
 import com.granule.logging.Logger;
 import com.granule.logging.LoggerFactory;
-import com.granule.settings.AbstractCompressorSettings;
+import com.granule.settings.CompressorSettings;
 import com.granule.utils.PathUtils;
 
 import javax.servlet.ServletException;
@@ -50,9 +50,9 @@ public class CompressServlet extends HttpServlet {
 
     private static String version = "unknown";
 
-	private final AbstractCompressorSettings compressorSettings;
+	private final CompressorSettings compressorSettings;
 
-	public CompressServlet(AbstractCompressorSettings compressorSettings) {
+	public CompressServlet(CompressorSettings compressorSettings) {
 		this.compressorSettings = compressorSettings;
 	}
 

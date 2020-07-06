@@ -19,7 +19,7 @@ import com.google.javascript.jscomp.CompilationLevel;
 import com.google.javascript.jscomp.Compiler;
 import com.google.javascript.jscomp.CompilerOptions;
 import com.google.javascript.jscomp.Result;
-import com.granule.settings.AbstractCompressorSettings;
+import com.granule.settings.CompressorSettings;
 import com.granule.settings.CompressorSettingsHelper;
 import com.granule.utils.CSSHandler;
 import com.granule.utils.PathUtils;
@@ -35,7 +35,7 @@ import java.util.*;
 public class Compressor {
 
     public static String compile(List<FragmentDescriptor> scripts, IRequestProxy request,
-                                 AbstractCompressorSettings settings) throws JSCompileException {
+                                 CompressorSettings settings) throws JSCompileException {
         Compiler compiler = new Compiler();
 
         CompilerOptions options = new CompilerOptions();
@@ -95,7 +95,7 @@ public class Compressor {
         return sb.toString();
     }
 
-    public static String minifyJs(List<FragmentDescriptor> scripts, AbstractCompressorSettings settings,
+    public static String minifyJs(List<FragmentDescriptor> scripts, CompressorSettings settings,
                                   IRequestProxy request) throws JSCompileException {
         String result = unify(scripts, request);
         try {
@@ -110,7 +110,7 @@ public class Compressor {
     }
 
     public static String unifyCss(List<FragmentDescriptor> fragments, List<FragmentDescriptor> deps,
-                                  AbstractCompressorSettings settings, IRequestProxy request) throws JSCompileException {
+                                  CompressorSettings settings, IRequestProxy request) throws JSCompileException {
         StringBuilder sb = new StringBuilder();
         for (FragmentDescriptor sd : fragments) {
             try {
@@ -127,13 +127,13 @@ public class Compressor {
     }
 
     public static String minifyCss(List<FragmentDescriptor> fragments, List<FragmentDescriptor> deps,
-                                   AbstractCompressorSettings settings, IRequestProxy request) throws JSCompileException {
+                                   CompressorSettings settings, IRequestProxy request) throws JSCompileException {
         String result = unifyCss(fragments, deps, settings, request);
         CSSFastMin cssMin = new CSSFastMin();
         return cssMin.minimize(result);
     }
 
-    private static String getLicenses(List<FragmentDescriptor> fragments, AbstractCompressorSettings settings,
+    private static String getLicenses(List<FragmentDescriptor> fragments, CompressorSettings settings,
                                       IRequestProxy request) throws IOException {
         Set<String> licenses = new HashSet<String>();
         for (FragmentDescriptor fd : fragments) {
@@ -146,7 +146,7 @@ public class Compressor {
         return sb.toString();
     }
 
-    private static boolean checkFile(String filename, AbstractCompressorSettings settings) {
+    private static boolean checkFile(String filename, CompressorSettings settings) {
         List<String> files = settings.getKeepFirstCommentPathes();
         for (String file : files) {
             file = PathUtils.clean(file);

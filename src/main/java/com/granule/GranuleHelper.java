@@ -18,7 +18,7 @@ package com.granule;
 
 import com.granule.cache.TagCacheFactory;
 import com.granule.calcdeps.CalcDeps;
-import com.granule.settings.AbstractCompressorSettings;
+import com.granule.settings.CompressorSettings;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
@@ -30,7 +30,7 @@ import java.util.HashSet;
  * Time: 2:47
  */
 public class GranuleHelper {
-    public static AbstractCompressorSettings getSettings(HttpServletRequest request) throws IOException {
+    public static CompressorSettings getSettings(HttpServletRequest request) throws IOException {
         return TagCacheFactory.getCompressorSettings(new RealRequestProxy(request).getRealPath("/"));
     }
 

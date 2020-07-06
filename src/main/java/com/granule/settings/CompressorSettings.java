@@ -5,7 +5,7 @@ import com.granule.JSCompileException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class AbstractCompressorSettings {
+public class CompressorSettings {
 
 	public String getJsCompressMethod() {
 		return CompressorSettingsHelper.JSFASTMIN_VALUE;

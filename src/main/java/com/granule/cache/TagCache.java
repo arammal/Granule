@@ -19,7 +19,7 @@ import com.granule.CachedBundle;
 import com.granule.FragmentDescriptor;
 import com.granule.IRequestProxy;
 import com.granule.JSCompileException;
-import com.granule.settings.AbstractCompressorSettings;
+import com.granule.settings.CompressorSettings;
 
 import javax.servlet.ServletContext;
 import java.util.List;
@@ -30,11 +30,11 @@ import java.util.List;
  * Time: 3:30:43
  */
 public interface TagCache {
-	public String compressAndStore(IRequestProxy request, AbstractCompressorSettings settings, List<FragmentDescriptor> fragmentDescriptors, boolean isJs, String options) throws JSCompileException;
+	public String compressAndStore(IRequestProxy request, CompressorSettings settings, List<FragmentDescriptor> fragmentDescriptors, boolean isJs, String options) throws JSCompileException;
 
-	public CachedBundle getCompiledBundle(IRequestProxy request, AbstractCompressorSettings settings, String id) throws JSCompileException;
+	public CachedBundle getCompiledBundle(IRequestProxy request, CompressorSettings settings, String id) throws JSCompileException;
 
-	public void initForStandalone(String rootPath, AbstractCompressorSettings settings);
+	public void initForStandalone(String rootPath, CompressorSettings settings);
 
-	public void initWeb(ServletContext context, AbstractCompressorSettings settings);
+	public void initWeb(ServletContext context, CompressorSettings settings);
 }

@@ -35,7 +35,7 @@ import com.granule.parser.Attributes;
 import com.granule.parser.Element;
 import com.granule.parser.TagReader;
 import com.granule.parser.Tags;
-import com.granule.settings.AbstractCompressorSettings;
+import com.granule.settings.CompressorSettings;
 import com.granule.settings.CompressorSettingsHelper;
 import com.granule.utils.OptionsHandler;
 import com.granule.utils.PathUtils;
@@ -64,7 +64,7 @@ public class CompressTagHandler {
     public String handleTag(IRequestProxy requestProxy, IRequestProxy runtimRequest, String oldBody) throws JSCompileException {
         String newBody = oldBody;
         try {
-            AbstractCompressorSettings settings = TagCacheFactory.getCompressorSettings(requestProxy.getRealPath("/"));
+            CompressorSettings settings = TagCacheFactory.getCompressorSettings(requestProxy.getRealPath("/"));
             String bp = basepath == null ? settings.getBasePath() : basepath;
             // JavaScript processing
             String opts = null;
@@ -252,7 +252,7 @@ public class CompressTagHandler {
         public String scriptId = null;
     }
 
-    private String processChunk(String chunk, IRequestProxy requestProxy, IRequestProxy runtimeRequest, AbstractCompressorSettings settings)
+    private String processChunk(String chunk, IRequestProxy requestProxy, IRequestProxy runtimeRequest, CompressorSettings settings)
             throws JSCompileException {
         TagReader source = new TagReader(chunk);
         String bp = basepath == null ? settings.getBasePath() : basepath;

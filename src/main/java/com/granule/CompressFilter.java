@@ -18,7 +18,7 @@ package com.granule;
 import com.granule.cache.TagCacheFactory;
 import com.granule.logging.Logger;
 import com.granule.logging.LoggerFactory;
-import com.granule.settings.AbstractCompressorSettings;
+import com.granule.settings.CompressorSettings;
 
 import javax.servlet.*;
 import javax.servlet.http.HttpServletRequest;
@@ -32,9 +32,9 @@ import java.io.IOException;
  * Time: 4:16:28
  */
 public class CompressFilter implements Filter {
-	private final AbstractCompressorSettings compressorSettings;
+	private final CompressorSettings compressorSettings;
 
-	public CompressFilter(AbstractCompressorSettings compressorSettings) {
+	public CompressFilter(CompressorSettings compressorSettings) {
 		this.compressorSettings = compressorSettings;
 	}
 

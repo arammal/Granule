@@ -21,7 +21,7 @@ import com.granule.json.JSONException;
 import com.granule.json.JSONObject;
 import com.granule.logging.Logger;
 import com.granule.logging.LoggerFactory;
-import com.granule.settings.AbstractCompressorSettings;
+import com.granule.settings.CompressorSettings;
 import com.granule.settings.CompressorSettingsHelper;
 
 import java.io.ByteArrayInputStream;
@@ -90,7 +90,7 @@ public class CachedBundle {
         return d;
     }
 
-    public void compileScript(AbstractCompressorSettings settings, IRequestProxy request) throws JSCompileException {
+    public void compileScript(CompressorSettings settings, IRequestProxy request) throws JSCompileException {
         logger.debug("Start compile javascript");
         mimeType = JAVASCRIPT_MIME;
         CalcDeps cd = new CalcDeps();
@@ -125,14 +125,14 @@ public class CachedBundle {
         this.modifyDate=calcModifyDate(request);
     }
 
-    public void compile(AbstractCompressorSettings settings, IRequestProxy request) throws JSCompileException {
+    public void compile(CompressorSettings settings, IRequestProxy request) throws JSCompileException {
         dependentFragments.clear();
         if (mimeType != null && mimeType.equals(JAVASCRIPT_MIME))
             compileScript(settings, request);
         else compileCss(settings, request);
     }
 
-    public void compileCss(AbstractCompressorSettings settings, IRequestProxy request) throws JSCompileException {
+    public void compileCss(CompressorSettings settings, IRequestProxy request) throws JSCompileException {
         logger.debug("Start compile css");
         mimeType = CSS_MIME;
         String text = "";

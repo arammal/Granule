@@ -26,7 +26,7 @@ import java.util.Properties;
 /**
  * User: Dario Wunsch Date: 22.06.2010 Time: 22:09:21
  */
-public class DefaultCompressorSettings extends AbstractCompressorSettings {
+public class DefaultCompressorSettings extends CompressorSettings {
 	private String jsCompressMethod = CompressorSettingsHelper.JSFASTMIN_VALUE;
 	private String cssCompressMethod = CompressorSettingsHelper.CSSFASTMIN_VALUE;
 	private String cache = CompressorSettingsHelper.MEMORY_VALUE;

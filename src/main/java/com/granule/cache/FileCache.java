@@ -23,7 +23,7 @@ import com.granule.json.JSONException;
 import com.granule.json.JSONObject;
 import com.granule.logging.Logger;
 import com.granule.logging.LoggerFactory;
-import com.granule.settings.AbstractCompressorSettings;
+import com.granule.settings.CompressorSettings;
 import com.granule.utils.PathUtils;
 
 import javax.servlet.ServletContext;
@@ -61,7 +61,7 @@ public class FileCache extends TagCacheImpl {
 	}
 
 	public String compressAndStore(IRequestProxy request,
-								   AbstractCompressorSettings settings,
+								   CompressorSettings settings,
 								   List<FragmentDescriptor> fragmentDescriptors, boolean isJs,
 								   String options) throws JSCompileException {
 
@@ -123,7 +123,7 @@ public class FileCache extends TagCacheImpl {
 	}
 
 	public CachedBundle getCompiledBundle(IRequestProxy request,
-										  AbstractCompressorSettings settings, String id) throws JSCompileException {
+										  CompressorSettings settings, String id) throws JSCompileException {
 		logger.debug("FileCache getCompiledBundle");
 		CachedBundle bundle = null;
 		synchronized (this) {
@@ -161,7 +161,7 @@ public class FileCache extends TagCacheImpl {
 					}
 					CachedBundle cs = new CachedBundle();
 					cs.loadFromJSON(obj, cacheFolder);
-					AbstractCompressorSettings settings = TagCacheFactory
+					CompressorSettings settings = TagCacheFactory
 							.getCompressorSettings(context.getRealPath("/"));
 					if (cs.getOptions() != null)
 						settings.setOptions(cs.getOptions());
@@ -247,7 +247,7 @@ public class FileCache extends TagCacheImpl {
 		return deleted;
 	}
 
-	public void initForStandalone(String rootPath, AbstractCompressorSettings settings) {
+	public void initForStandalone(String rootPath, CompressorSettings settings) {
 		cacheFolder = calculateCacheLocation(settings, rootPath);
 		emptyCacheFolder();
 		String catalogFilename = getCacheCatalogFilePath();
@@ -262,7 +262,7 @@ public class FileCache extends TagCacheImpl {
 				f.delete();
 	}
 
-	public void initWeb(ServletContext context, AbstractCompressorSettings settings) {
+	public void initWeb(ServletContext context, CompressorSettings settings) {
 		logger.debug("FileCache init");
 		String rootPath = context.getRealPath("/");
 
@@ -298,7 +298,7 @@ public class FileCache extends TagCacheImpl {
 		}
 	}
 
-	private String calculateCacheLocation(AbstractCompressorSettings settings,
+	private String calculateCacheLocation(CompressorSettings settings,
 										  String rootPath) {
 		String cacheFolder;
 		if (settings.getCacheFileLocation() == null)

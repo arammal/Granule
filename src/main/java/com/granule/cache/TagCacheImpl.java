@@ -17,7 +17,7 @@ package com.granule.cache;
 
 import com.granule.CachedBundle;
 import com.granule.FragmentDescriptor;
-import com.granule.settings.AbstractCompressorSettings;
+import com.granule.settings.CompressorSettings;
 
 import java.util.HashMap;
 import java.util.List;
@@ -50,7 +50,7 @@ public abstract class TagCacheImpl implements TagCache {
 		return id;
 	}
 
-	protected String generateSignature(AbstractCompressorSettings settings, List<FragmentDescriptor> fragmentDescriptors,
+	protected String generateSignature(CompressorSettings settings, List<FragmentDescriptor> fragmentDescriptors,
 									   String options, boolean isJs) {
 		StringBuilder all = new StringBuilder();
 		for (FragmentDescriptor sd : fragmentDescriptors)

@@ -16,7 +16,7 @@
 package com.granule.cache;
 
 import com.granule.JSCompileException;
-import com.granule.settings.AbstractCompressorSettings;
+import com.granule.settings.CompressorSettings;
 import com.granule.settings.DefaultCompressorSettings;
 import com.granule.settings.CompressorSettingsHelper;
 
@@ -38,7 +38,7 @@ public class TagCacheFactory {
 		return instance;
 	}
 
-	public static void init(AbstractCompressorSettings settings, ServletContext context) throws IOException {
+	public static void init(CompressorSettings settings, ServletContext context) throws IOException {
 		if (settings == null) {
 			settings = initInstance(context.getRealPath("/"));
 		}
@@ -46,8 +46,8 @@ public class TagCacheFactory {
 		instance.initWeb(context, settings);
 	}
 
-	private static AbstractCompressorSettings initInstance(String rootPath) throws IOException {
-		AbstractCompressorSettings settings = getCompressorSettings(rootPath);
+	private static CompressorSettings initInstance(String rootPath) throws IOException {
+		CompressorSettings settings = getCompressorSettings(rootPath);
 		if (settings.getCache().equals(CompressorSettingsHelper.DISK_CACHE_VALUE))
 			instance = FileCache.getInstance();
 		else instance = MemoryCache.getInstance();
@@ -63,7 +63,7 @@ public class TagCacheFactory {
 
 	protected static boolean propertiesLoaded = false;
 
-	public static AbstractCompressorSettings getCompressorSettings(String rootPath) throws IOException {
+	public static CompressorSettings getCompressorSettings(String rootPath) throws IOException {
 		synchronized (properties) {
 			if (!propertiesLoaded) {
 				loadSettings(null);
