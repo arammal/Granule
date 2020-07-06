@@ -1,12 +1,12 @@
 /*
  * Copyright 2010 Granule Inc.
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
  * the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
@@ -15,16 +15,12 @@
  */
 package com.granule;
 
-import java.io.BufferedInputStream;
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.StreamTokenizer;
-import java.io.StringReader;
+import com.granule.utils.Utf8Properties;
+
+import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
-
-import com.granule.utils.Utf8Properties;
+import java.util.Properties;
 
 /**
  * User: Dario Wunsch Date: 22.06.2010 Time: 22:09:21
@@ -49,7 +45,7 @@ public class CompressorSettings {
     private String cacheFileLocation = null;
     private String tagName = DEFAULT_TAG_NAME;
     private String contextRoot = null;
-	private String basePath = null;
+    private String basePath = null;
 
     public static final String NONE_VALUE = "none";
     public static final String CLOSURE_COMPILER_VALUE = "closure-compiler";
@@ -133,10 +129,10 @@ public class CompressorSettings {
         return tagName;
     }
 
-    public void load(Utf8Properties props) throws IOException {
+    public void load(Properties props) throws IOException {
         String readed;
         String mode = ALL_VALUE;
-        
+
         if (props.containsKey(TAG_PROCESS_KEY)) {
             readed = props.getProperty(TAG_PROCESS_KEY);
             if (ALL_VALUE.equalsIgnoreCase(readed) || JAVASCRIPT_VALUE.equalsIgnoreCase(readed)
@@ -182,8 +178,8 @@ public class CompressorSettings {
                     || DISK_CACHE_VALUE.equalsIgnoreCase(readed)
                     || DISK_CACHE_VALUE_ADD2.equalsIgnoreCase(readed))
                 if (DISK_CACHE_VALUE_ADD2.equalsIgnoreCase(readed))
-                	readed=DISK_CACHE_VALUE;
-            	cache = readed;
+                    readed=DISK_CACHE_VALUE;
+            cache = readed;
         }
 
         if (props.containsKey(CLOSURE_COMPILER_FORMATTING_PRETTY_PRINT_KEY))
@@ -204,7 +200,7 @@ public class CompressorSettings {
                     || ADVANCED_OPTIMIZATIONS_VALUE.equalsIgnoreCase(readed))
                 optimization = readed;
         }
-        
+
         if (props.containsKey(CLOSURE_COMPILER_OUTPUT_WRAPPER_KEY))
             outputWrapper = props.getProperty(CLOSURE_COMPILER_OUTPUT_WRAPPER_KEY);
 
@@ -215,23 +211,23 @@ public class CompressorSettings {
             cleanJsDuplicates = getBoolean(props.getProperty(TAG_JS_CLEANDUPICATES_KEY), cleanJsDuplicates);
 
         readFileListProperty(props, CLOSURE_ADD_PATH_KEY, closurePathes);
-        
+
         readFileListProperty(props, KEEP_FIRST_COMMENT_PATH_KEY, keepFirstCommentPathes);
 
         if (props.containsKey(IGNORE_MISSED_FILES_KEY))
             ignoreMissedFiles = getBoolean(props.getProperty(IGNORE_MISSED_FILES_KEY), ignoreMissedFiles);
-        
+
         if (props.containsKey(CACHE_FILE_LOCATION_KEY))
             cacheFileLocation = props.getProperty(CACHE_FILE_LOCATION_KEY);
-        
+
         if (props.containsKey(TAG_NAME_KEY))
             tagName = props.getProperty(TAG_NAME_KEY);
-        
+
         if (props.containsKey(CONTEXTROOT_KEY))
-        	contextRoot = props.getProperty(CONTEXTROOT_KEY);
+            contextRoot = props.getProperty(CONTEXTROOT_KEY);
     }
 
-    private void readFileListProperty(Utf8Properties props, String settingName, List<String> list) throws IOException {
+    private void readFileListProperty(Properties props, String settingName, List<String> list) throws IOException {
         if (props.containsKey(settingName)) {
             list.clear();
             String s = props.getProperty(settingName);
@@ -258,7 +254,7 @@ public class CompressorSettings {
         load(in);
     }
 
-    public CompressorSettings(Utf8Properties props) throws IOException {
+    public CompressorSettings(Properties props) throws IOException {
         load(props);
     }
 
@@ -305,16 +301,16 @@ public class CompressorSettings {
     public String getCacheFileLocation() {
         return cacheFileLocation;
     }
- 
+
     public String getContextRoot() {
-		return contextRoot;
-	}
+        return contextRoot;
+    }
 
-	public String getBasePath() {
-		return basePath;
-	}
+    public String getBasePath() {
+        return basePath;
+    }
 
-    
+
     public static boolean getBoolean(String str, boolean defaultvalue) {
         boolean result = "yes".equalsIgnoreCase(str)
                 || "on".equalsIgnoreCase(str)

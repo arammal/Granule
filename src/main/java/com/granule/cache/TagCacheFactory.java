@@ -1,12 +1,12 @@
 /*
  * Copyright 2010 Granule Inc.
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
  * the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
@@ -15,16 +15,12 @@
  */
 package com.granule.cache;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.util.HashMap;
-
-import javax.servlet.ServletContext;
-
 import com.granule.CompressorSettings;
 import com.granule.JSCompileException;
-import com.granule.utils.Utf8Properties;
+
+import javax.servlet.ServletContext;
+import java.io.IOException;
+import java.util.*;
 
 /**
  * User: Dario Wunsch
@@ -32,15 +28,11 @@ import com.granule.utils.Utf8Properties;
  * Time: 3:34:11
  */
 public class TagCacheFactory {
-	public final static String PRODUCTION_PATH = "/WEB-INF/granule.properties";
-	public final static String DEBUG_PATH = "/WEB-INF/granule.debug.properties";
-	public final static String DEVELOPER_PATH = "/WEB-INF/granule.developer.properties";
-	
     private static TagCacheImpl instance = null;
 
     public static TagCache getInstance() throws JSCompileException {
-        if (instance==null)
-           throw new JSCompileException("Granule cache was loaded not on the server start-up. Recommended to add the parameter <load-on-startup>1<load-on-startup> into servlet configuration in web.xml.");
+        if (instance == null)
+            throw new JSCompileException("Granule cache was loaded not on the server start-up. Recommended to add the parameter <load-on-startup>1<load-on-startup> into servlet configuration in web.xml.");
         return instance;
     }
 
@@ -62,14 +54,14 @@ public class TagCacheFactory {
         instance.initForStandalone(rootPath, getCompressorSettings(rootPath));
     }
 
-    protected static final Utf8Properties settings = new Utf8Properties();
+    protected static final Properties settings = new Properties();
 
     protected static boolean settingsLoaded = false;
 
     public static CompressorSettings getCompressorSettings(String rootPath) throws IOException {
         synchronized (settings) {
             if (!settingsLoaded) {
-                loadSettings(rootPath, null, false);
+                loadSettings(null);
             }
         }
         return new CompressorSettings(settings);
@@ -78,30 +70,33 @@ public class TagCacheFactory {
     public static CompressorSettings getProductionCompressorSettings(String rootPath, HashMap<String, String> addition) throws IOException {
         synchronized (settings) {
             if (!settingsLoaded) {
-                loadSettings(rootPath, addition, true);
+                loadSettings(addition);
             }
         }
         return new CompressorSettings(settings);
     }
 
-    private static void loadSettings(String rootPath, HashMap<String, String> addition, boolean productionSettings) throws IOException {
-       
-        File productionPropertiesFile = new File(rootPath+PRODUCTION_PATH);
-		if (productionPropertiesFile.exists())
-            settings.load(new FileInputStream(productionPropertiesFile));
-        
-		File debugPropertiesFile = new File(rootPath+DEBUG_PATH);
-		if (!productionSettings && debugPropertiesFile.exists())
-            settings.load(new FileInputStream(debugPropertiesFile));
-    
-		File developerPropertiesFile = new File(rootPath+DEVELOPER_PATH);
-		if (!productionSettings && developerPropertiesFile.exists())
-            settings.load(new FileInputStream(developerPropertiesFile));
- 		
-		if (addition!=null) {
+    private static void loadSettings(HashMap<String, String> addition) {
+        ResourceBundle resource = ResourceBundle.getBundle("granule", Locale.getDefault());
+        if(resource != null) {
+            settings.putAll(toProperties(resource));
+        }
+
+        if (addition != null) {
             settings.putAll(addition);
         }
+
         settingsLoaded = true;
+    }
+
+    private static Properties toProperties(ResourceBundle resource) {
+        Properties properties = new Properties();
+        Enumeration<String> keys = resource.getKeys();
+        while (keys.hasMoreElements()) {
+            String key = keys.nextElement();
+            properties.put(key, resource.getString(key));
+        }
+        return properties;
     }
 
 }
