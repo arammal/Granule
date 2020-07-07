@@ -46,6 +46,9 @@ public class TagCacheFactory {
 	private static CompressorSettings initInstance(CompressorSettings settings, String rootPath) throws IOException {
 		if (settings == null) {
 			settings = getCompressorSettings(rootPath);
+		} else {
+			settingsInjected = true;
+			injectedSettings = settings;
 		}
 
 		if (settings.getCache().equals(CompressorSettingsHelper.DISK_CACHE_VALUE))
@@ -63,13 +66,21 @@ public class TagCacheFactory {
 
 	protected static boolean propertiesLoaded = false;
 
+	protected static boolean settingsInjected = false;
+
+	protected static CompressorSettings injectedSettings = null;
+
 	public static CompressorSettings getCompressorSettings(String rootPath) throws IOException {
-		synchronized (properties) {
-			if (!propertiesLoaded) {
-				loadSettings(null);
+		if (settingsInjected) {
+			return injectedSettings;
+		} else {
+			synchronized (properties) {
+				if (!propertiesLoaded) {
+					loadSettings(null);
+				}
 			}
+			return new DefaultCompressorSettings(properties);
 		}
-		return new DefaultCompressorSettings(properties);
 	}
 
 	private static void loadSettings(HashMap<String, String> addition) {
